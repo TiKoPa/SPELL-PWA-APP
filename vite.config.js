@@ -1,10 +1,11 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+const react = require("@vitejs/plugin-react");
 
-// https://vitejs.dev/config/
-export default defineConfig({
+module.exports = {
   plugins: [react()],
   server: {
-    host: '0.0.0.0',
-  }
-})
+    host: true,
+    port: 5173,
+    strictPort: true,
+    allowedHosts: "all",
+  },
+};

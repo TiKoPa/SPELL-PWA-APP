@@ -1,9 +1,25 @@
-import './App.css'
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import IslandMapPage from './pages/IslandMapPage';
+import SplashScreen from './components/SplashScreen';
 
-export default function App() {
+function App() {
+  const [loaded, setLoaded] = useState(false);
+
   return (
-    <main>
-      React ⚛️ + Vite ⚡ + Replit 🌀
-    </main>
-  )
+    <>
+      {!loaded && <SplashScreen onFinish={() => setLoaded(true)} />}
+      {loaded && (
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/map" element={<IslandMapPage />} />
+          </Routes>
+        </BrowserRouter>
+      )}
+    </>
+  );
 }
+
+export default App;

@@ -1,6 +1,12 @@
 run = "npm run dev"
 modules = ["nodejs-20"]
-hidden = [".config", "tsconfig.json", "tsconfig.node.json", "vite.config.js", ".gitignore"]
+hidden = [
+  ".config",
+  "tsconfig.json",
+  "tsconfig.node.json",
+  "vite.config.js",
+  ".gitignore",
+]
 entrypoint = "src/App.tsx"
 
 [nix]
@@ -9,11 +15,14 @@ channel = "stable-24_05"
 [unitTest]
 language = "nodejs"
 
+[env]
+PORT = "5173"
+
 [deployment]
-deploymentTarget = "static"
+deploymentTarget = "preview"    # ✅ вместо static
 build = ["npm", "run", "build"]
 publicDir = "dist"
 
 [[ports]]
-localPort = 5173
-externalPort = 80
+localPort = 5173  # ✅ основной порт
+externalPort = 80 # ✅ Replit откроет на .replit.dev
