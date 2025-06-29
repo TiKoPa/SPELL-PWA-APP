@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { user, login } = useAuth();
 
   const [logoShifted, setLogoShifted] = useState(false);
-  const [step, setStep] = useState("email"); // "email" | "code"
+  const [step, setStep] = useState("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
-  const [info, setInfo] = useState(""); // message from server
+  const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [expiresAt, setExpiresAt] = useState(null);
@@ -17,34 +19,23 @@ export default function LoginPage() {
   const [remaining, setRemaining] = useState({ code: "", resend: "" });
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    if (user) {
       navigate("/map");
       return;
     }
-
     const shift = setTimeout(() => setLogoShifted(true), 1500);
     return () => clearTimeout(shift);
-  }, [navigate]);
-  
-  useEffect(() => {
-    const shift = setTimeout(() => setLogoShifted(true), 1500);
-    return () => clearTimeout(shift);
-  }, []);
+  }, [navigate, user]);
 
-  // таймеры: сколько осталось до истечения кода и до возможности повторной отправки
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
-
-      const updateTimeLeft = (target) => {
+      const updateTimeLeft = (target: any) => {
         if (!target) return "";
-        const diff = new Date(target) - now;
+        const diff = new Date(target).getTime() - now.getTime();
         if (diff <= 0) return "00:00";
         const min = Math.floor(diff / 60000);
-        const sec = Math.floor((diff % 60000) / 1000)
-          .toString()
-          .padStart(2, "0");
+        const sec = Math.floor((diff % 60000) / 1000).toString().padStart(2, "0");
         return `${min}:${sec}`;
       };
 
@@ -100,8 +91,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok && data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("email", email);
+        login(data.token, { email }); // заменили localStorage
         navigate("/map");
       } else {
         setError(data.error || "Неверный код");
