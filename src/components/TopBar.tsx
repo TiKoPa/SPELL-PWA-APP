@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function TopBar({ energy, coins }: { energy: number; coins: number }) {
   return (
     <div style={{
